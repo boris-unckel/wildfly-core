@@ -31,19 +31,16 @@ import static org.jboss.as.controller.descriptions.ModelDescriptionConstants.PRO
 import static org.jboss.as.controller.descriptions.ModelDescriptionConstants.SERVER_CONFIG;
 import static org.jboss.as.controller.descriptions.ModelDescriptionConstants.SERVER_GROUP;
 import static org.jboss.as.controller.descriptions.ModelDescriptionConstants.SOCKET_BINDING_GROUP;
-import static org.jboss.as.controller.descriptions.ModelDescriptionConstants.SUBSYSTEM;
 
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
 import org.jboss.as.controller.PathAddress;
 import org.jboss.as.controller.PathElement;
 import org.jboss.as.controller.descriptions.ModelDescriptionConstants;
 import org.jboss.as.controller.extension.ExtensionRegistry;
-import org.jboss.as.controller.extension.SubsystemInformation;
 import org.jboss.as.controller.registry.Resource;
 import org.jboss.as.controller.registry.Resource.ResourceEntry;
 import org.jboss.as.domain.controller.logging.DomainControllerLogger;
@@ -188,21 +185,6 @@ public class IgnoredNonAffectedServerGroupsUtil {
         for (ServerConfigInfo serverConfig : serverConfigs) {
             if (serverConfig.getServerGroup().equals(name)) {
                 return false;
-            }
-        }
-        return true;
-    }
-
-    private boolean ignoreExtension(final Resource domainResource, final Collection<ServerConfigInfo> serverConfigs, final String name) {
-        //Should these be the subsystems on the master, as we have it at present, or the ones from the slave?
-        Map<String, SubsystemInformation> subsystems = extensionRegistry.getAvailableSubsystems(name);
-        for (String subsystem : subsystems.keySet()) {
-            for (ResourceEntry profileEntry : domainResource.getChildren(PROFILE)) {
-                if (profileEntry.hasChild(PathElement.pathElement(SUBSYSTEM, subsystem))) {
-                    if (!ignoreProfile(domainResource, serverConfigs, profileEntry.getName())) {
-                        return false;
-                    }
-                }
             }
         }
         return true;

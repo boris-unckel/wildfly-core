@@ -87,7 +87,6 @@ class VaultXml {
         final int vaultAttribCount = reader.getAttributeCount();
 
         ModelNode vault = new ModelNode();
-        String code = null;
 
         for (int i = 0; i < vaultAttribCount; i++) {
             requireNoNamespaceAttribute(reader, i);
@@ -105,9 +104,7 @@ class VaultXml {
 
         ModelNode vaultAddress = address.clone();
         vaultAddress.add(CORE_SERVICE, VAULT);
-        if (code != null) {
-            vault.get(Attribute.CODE.getLocalName()).set(code);
-        }
+
         vault.get(OP_ADDR).set(vaultAddress);
         vault.get(OP).set(ADD);
 
@@ -167,38 +164,6 @@ class VaultXml {
             }
         }
         list.add(vault);
-    }
-
-    private void parseVaultOption(XMLExtendedStreamReader reader, ModelNode vaultOptions) throws XMLStreamException {
-        String name = null;
-        String val = null;
-        EnumSet<Attribute> required = EnumSet.of(Attribute.NAME, Attribute.VALUE);
-        final int count = reader.getAttributeCount();
-        for (int i = 0; i < count; i++) {
-            requireNoNamespaceAttribute(reader, i);
-            final String value = reader.getAttributeValue(i);
-            final Attribute attribute = Attribute.forName(reader.getAttributeLocalName(i));
-            required.remove(attribute);
-            switch (attribute) {
-                case NAME: {
-                    name = value;
-                    break;
-                }
-                case VALUE: {
-                    val = value;
-                    break;
-                }
-                default:
-                    throw unexpectedAttribute(reader, i);
-            }
-        }
-
-        if (required.size() > 0) {
-            throw missingRequired(reader, required);
-        }
-
-        vaultOptions.get(name).set(val);
-        requireNoContent(reader);
     }
 
     private void parseModuleOption(XMLExtendedStreamReader reader, ModelNode moduleOptions) throws XMLStreamException {
