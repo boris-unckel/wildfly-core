@@ -74,7 +74,7 @@ public class JBossEntityResolver implements EntityResolver, LSResourceResolver {
     static {
         AccessController.doPrivileged(new PrivilegedAction() {
             public Object run() {
-                warnOnNonFileURLs = new Boolean(System.getProperty("org.jboss.resolver.warning", "false")).booleanValue();
+                warnOnNonFileURLs = Boolean.parseBoolean(System.getProperty("org.jboss.resolver.warning", "false"));
                 return null;
             }
         });
